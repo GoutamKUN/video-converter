@@ -32,7 +32,12 @@ def get_platform(url: str) -> str:
 def download_video(url: str) -> tuple[str, str]:
     """Download video using yt-dlp and return (filename, source_label)."""
     try:
-        with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
+        # First, extract info with browser-like headers
+        ydl_info_opts = {
+            'quiet': True,
+            'extract_flat': True,  # Just get info, no download yet
+        }
+        with yt_dlp.YoutubeDL(ydl_info_opts) as ydl:
             info = ydl.extract_info(url, download=False)
 
             title = info.get("title", "untitled").split("\n")[0][:60]
@@ -40,11 +45,13 @@ def download_video(url: str) -> tuple[str, str]:
 
             filename = sanitize_filename(f"{uploader} {title}.mp4")
 
+            # Download opts with User-Agent to mimic browser
             ydl_opts = {
                 'format': 'bestvideo+bestaudio/best',
                 'outtmpl': filename,
                 'quiet': True,
                 'merge_output_format': 'mp4',
+                'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',  # Recent Chrome UA
             }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
