@@ -2,7 +2,7 @@ name: Run Discord Bot
 
 on:
   schedule:
-    - cron: '0 0 */3 * *'  # Every 3 other day at midnight UTC
+    - cron: ' '  # Every 3 other day at midnight UTC
   workflow_dispatch:  # Allows manual trigger from GitHub UI
 
 jobs:
